@@ -89,8 +89,11 @@ class Animation():
         print("Start animation.")
         self.anime = animation.FuncAnimation(
             self.fig, self.update, frames=range(self.datasets_num), interval=30, init_func=self.init_ax_style, repeat=False)
-        plt.show()
-        plt.close()
+        self.anime.save('test-anime.mp4',
+                        writer='ffmpeg')  # fpsはデフォルトの5
+
+        # plt.show()
+        # plt.close()
 
 
 class Stock:

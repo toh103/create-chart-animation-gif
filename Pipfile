@@ -9,6 +9,7 @@ matplotlib = "*"
 yfinance = "*"
 pandas = "*"
 seaborn = "*"
+pysimplegui = "*"
 
 [dev-packages]
 

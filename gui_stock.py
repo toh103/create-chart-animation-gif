@@ -3,6 +3,59 @@ import datetime
 import stock as Stock
 
 
+class WindowView:
+    interval_tuple = tuple(
+        '1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo'.split(','))
+    text_area_size = (16, 1)
+    input_area_size = (30, 1)
+    button_area_size = (8, 1)
+    default_font = ('Monaco', 16)
+    current_datetime = datetime.datetime.now().strftime('%Y-%m-%d')
+    text_default = {'font': default_font, 'size': text_area_size}
+    input_default = {'font': default_font, 'size': input_area_size}
+    button_default = {'font': default_font, 'size': button_area_size}
+
+    def __init__(self):
+
+        self.layout = [[sg.Text('StockCODE', **WindowView.text_default), sg.InputText(**WindowView.input_default, key='code')],
+                       [sg.Text('From', **WindowView.text_default),
+                        sg.InputText(WindowView.current_datetime, **WindowView.input_default, key='start_ymd')],
+                       [sg.Text('To', **WindowView.text_default),
+                        sg.InputText(WindowView.current_datetime, **WindowView.input_default, key='end_ymd')],
+                       [sg.Text('---option----', **WindowView.text_default)],
+                       [sg.Text('Interval', **WindowView.text_default), sg.InputCombo(
+                           WindowView.interval_tuple, default_value="2m", font=WindowView.default_font, size=(5, 1), key='interval')],
+                       [sg.Text('Show Graph', **WindowView.text_default),
+                        sg.Radio('Enable', **WindowView.input_default, key='show_chart', group_id='mode')],
+                       [sg.Text('Save Animation', **WindowView.text_default),
+                        sg.Radio('Enable', **WindowView.input_default, key='save_anime', group_id='mode')],
+                       [sg.Text('Save Directory', **WindowView.text_default),
+                        sg.InputText('', **WindowView.input_default, key='save_dir')],
+                       [sg.Text('File Name', **WindowView.text_default), sg.InputText(
+                           '', **WindowView.input_default, key='file_name'), sg.Button('AUTO',  size=(6, 1), font=WindowView.default_font, key='-BUT_AUTO_FILE_NAME-')],
+                       [sg.Exit('Exit', size=(6, 1), font=WindowView.default_font, button_color='coral'), sg.Button('DEFAULT',  size=(7, 1), font=WindowView.default_font, key='-BUT_DEFAULT-'), sg.Submit(
+                           'Submit', size=(10, 1), font=WindowView.default_font, button_color='mediumaquamarine'), ]
+                       ]
+        self.window = sg.Window('Stock Animation Maker', self.layout,)
+
+    def show_window(self):
+        while True:
+            event, values = self.window.read()
+            if event is None:
+                break
+            elif event == 'Exit':
+                break
+            elif event == 'Submit':
+                create_chart(values)
+            elif event == '-BUT_DEFAULT-':
+                print('BUT_A clicked')
+                set_default(self.window)
+            elif event == '-BUT_AUTO_FILE_NAME-':
+
+                self.window['file_name'].update()
+        self.window.close()
+
+
 def set_default(window):
     current_datetime = datetime.datetime.now().strftime('%Y-%m-%d')
     default_code = '^NDX'
@@ -52,50 +105,8 @@ def create_chart(values):
 
 
 def main():
-
-    interval_tuple = tuple(
-        '1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo'.split(','))
-    text_area_size = (16, 1)
-    input_area_size = (30, 1)
-    default_font = ('Monaco', 16)
-    current_datetime = datetime.datetime.now().strftime('%Y-%m-%d')
-
-    layout = [[sg.Text('StockCODE', font=default_font, size=text_area_size), sg.InputText(font=default_font, size=input_area_size, key='code')],
-              [sg.Text('From', font=default_font, size=text_area_size),
-               sg.InputText(current_datetime, font=default_font, size=input_area_size, key='start_ymd')],
-              [sg.Text('To', font=default_font, size=text_area_size),
-               sg.InputText(current_datetime, font=default_font, size=input_area_size, key='end_ymd')],
-              [sg.Text('---option----', font=default_font, size=text_area_size)],
-              [sg.Text('Interval', font=default_font, size=text_area_size), sg.InputCombo(
-                  interval_tuple, default_value="2m", font=default_font, size=(5, 1), key='interval')],
-              [sg.Text('Show Graph', font=default_font, size=text_area_size),
-               sg.Radio('Enable', font=default_font, size=input_area_size, key='show_chart', group_id='mode')],
-              [sg.Text('Save Animation', font=default_font, size=text_area_size),
-               sg.Radio('Enable', font=default_font, size=input_area_size, key='save_anime', group_id='mode')],
-              [sg.Text('Save Directory', font=default_font, size=text_area_size),
-               sg.InputText('', font=default_font, size=input_area_size, key='save_dir')],
-              [sg.Text('File Name', font=default_font, size=text_area_size), sg.InputText(
-                  '', font=default_font, size=input_area_size, key='file_name'), sg.Button('AUTO',  size=(6, 1), font=default_font, key='-BUT_AUTO_FILE_NAME-')],
-              [sg.Exit('Exit', size=(6, 1), font=default_font, button_color='coral'), sg.Button('DEFAULT',  size=(7, 1), font=default_font, key='-BUT_DEFAULT-'), sg.Submit(
-                  'Submit', size=(10, 1), font=default_font, button_color='mediumaquamarine'), ]
-              ]
-    window = sg.Window('Stock Animation Maker', layout,)
-
-    while True:
-        event, values = window.read()
-        if event is None:
-            break
-        elif event == 'Exit':
-            break
-        elif event == 'Submit':
-            create_chart(values)
-        elif event == '-BUT_DEFAULT-':
-            print('BUT_A clicked')
-            set_default(window)
-        elif event == '-BUT_AUTO_FILE_NAME-':
-            file_name =
-            window['file_name'].update()
-    window.close()
+    window = WindowView()
+    window.show_window()
 
 
 if __name__ == '__main__':
